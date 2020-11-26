@@ -9,7 +9,7 @@
 !**/*.html
 
 # ignore even valid files if in…
-*.d.ts
+**/*.d.ts
 .git/**
 .idea/**
 node_modules/**
