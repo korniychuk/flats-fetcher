@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "start": "clasp push --watch"
+  },
+  "dependencies": {
+    "lodash": "~4.17.20"
+  },
+  "devDependencies": {
+    "@types/google-apps-script": "~1.0.20",
+    "@types/lodash": "~4.14.165",
+    "clasp": "~1.0.0",
+    "typescript": "3.9.7"
+  }
+}
