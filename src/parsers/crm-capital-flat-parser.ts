@@ -3,23 +3,14 @@ import {
     Flat,
     FlatParser,
 } from '../types';
-import { assertNil } from '../assertions';
 import {
     HttpService,
     TextEngineService,
 } from '../services';
+import { assertNil } from '../assertions';
 
-interface Subway {
-    id: number;
-    is_active: boolean;
-    location: { type: 'Point', coordinates: [number, number] }
-    name: string;
-    order: number
-    subway_line: number;
-}
-
-export class DimDimFlatParser implements FlatParser {
-    private urlRegExp = /\/dimdim\.ua\/rent\/apartment\/(?<id>\d+)/;
+export class CrmCapitalFlatParser implements FlatParser {
+    private urlRegExp = /crm-capital\.realtsoft\.net\/estate-(?<id>\d+)\.html/;
 
     public constructor(
         private t: TextEngineService,
@@ -50,8 +41,8 @@ export class DimDimFlatParser implements FlatParser {
         const floorHeating = this.t.retrieveFloorHeating(description);
         const dishWasher = this.t.retrieveDishWasher(description);
         const updatedAt = this.t.makeUpdatedAt(new Date(res.updated_at));
-        const subways = this.prepareSubways(res.subways_distance || []).join('\n');
-        const info = [area, floor, updatedAt, floorHeating, dishWasher, subways].join('\n');
+        // const subways = this.prepareSubways(res.subways_distance || []).join('\n');
+        const info = [area, floor, updatedAt, floorHeating, dishWasher].join('\n');
 
         return {
             address,
@@ -73,21 +64,12 @@ export class DimDimFlatParser implements FlatParser {
         return +id;
     }
 
-    private prepareSubways(near: AnyObject[]): string[] {
-        const indexed = _.keyBy(this.fetchSubways(), v => v.id);
-        return near.map(subway => `м. ${ indexed[subway.subway_id]?.name } 🚶‍\u00a0${ subway.minutes } мин`);
-    }
-
     private fetchFlatInfo(flatId: number): AnyObject {
-        const data = this.http.fetchJSON(
-            `https://dimdim.wrenchtech.io/api/flats/?ids=${ flatId }`,
+        const data = this.http.fetchHtml(
+            `https://crm-capital.realtsoft.net/estate-${ flatId }.html`,
             `Can't fetch flat info by ID: ${ flatId }`,
-        )[0];
+        );
         return data;
-    }
-
-    private fetchSubways(): Subway[] {
-        return this.http.fetchJSON<Subway>(`https://dimdim.wrenchtech.io/api/cities/1/subways/`);
     }
 
 }

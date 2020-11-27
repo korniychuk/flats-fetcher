@@ -7,11 +7,13 @@
     "start": "clasp push --watch"
   },
   "dependencies": {
-    "lodash": "~4.17.20"
+    "lodash": "~4.17.20",
+    "cheerio": "~1.0.0-rc.3"
   },
   "devDependencies": {
     "@types/google-apps-script": "~1.0.20",
     "@types/lodash": "~4.14.165",
+    "@types/cheerio": "~0.22.21",
     "clasp": "~1.0.0",
     "exports-loader": "~1.1.1",
     "ts-loader": "~8.0.11",

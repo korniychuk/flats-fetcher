@@ -22,7 +22,8 @@
     "target": "ES2019",
     "types": [
       "google-apps-script",
-      "lodash"
+      "lodash",
+      "cheerio"
     ]
   }
 }

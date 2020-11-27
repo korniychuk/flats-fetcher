@@ -1,15 +1,22 @@
 import {
     FlatFillerService,
     FlatParserStrategyService,
+    HttpService,
     TextEngineService,
 } from './services';
-import { DimDimFlatParser } from './parsers';
+import {
+    CrmCapitalFlatParser,
+    DimDimFlatParser,
+} from './parsers';
 
 const storage = new Map();
+storage.set(HttpService, new HttpService());
 storage.set(TextEngineService, new TextEngineService());
-storage.set(DimDimFlatParser, new DimDimFlatParser(storage.get(TextEngineService)));
+storage.set(DimDimFlatParser, new DimDimFlatParser(storage.get(TextEngineService), storage.get(HttpService)));
+storage.set(CrmCapitalFlatParser, new CrmCapitalFlatParser(storage.get(TextEngineService), storage.get(HttpService)));
 storage.set(FlatParserStrategyService, new FlatParserStrategyService([
     storage.get(DimDimFlatParser),
+    storage.get(CrmCapitalFlatParser),
 ]));
 storage.set(FlatFillerService, new FlatFillerService(storage.get(TextEngineService)));
 
