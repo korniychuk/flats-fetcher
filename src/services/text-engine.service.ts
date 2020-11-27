@@ -1,7 +1,7 @@
 export class TextEngineService {
 
     public prepareAddress(str: string): string {
-        return str.replace(/ *(ул|вул)\.? */ig, '');
+        return str.replace(/ *(ул(ица)?|вул(иця)?)\.? */ig, '');
     }
 
     public prepareComplex(str: string): string {
@@ -10,7 +10,7 @@ export class TextEngineService {
 
     public retrieveComplex(str: string): string | undefined {
         const res = str.match(
-            /(?:ЖК|Клубный дом)\s*(?:(?:(['"]).+?\1)|(?:«.+?»)|(?:“.+?”)|[a-zа-яі'"«»]+\d*(?:(?! [св])\s+(?!(ул|вул|\d+-))[a-zа-яі\d'"«»]+){0,4})/ig,
+            /(?:ЖК|Жил(?:ой)?\s*Комплекс|Клубный дом)\s*(?:(?:(['"]).+?\1)|(?:«.+?»)|(?:“.+?”)|[a-zа-яі'"«»]+\d*(?:(?! [св])\s+(?!(ул|вул|\d+-))[a-zа-яі\d'"«»]+){0,4})/ig,
         );
         return res?.find(v => /ЖК/i.test(v)) || res?.[0];
     }

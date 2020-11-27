@@ -34,6 +34,7 @@ export function refresh(): void {
   const filler = DI.get(FlatFillerService);
   console.log('URLs:', urls);
 
+  const cantPrecessUrls: string[] = [];
   const unsupportedUrls: string[] = [];
   urls.forEach((url, i) => {
     const parser = parserChooser.get(url);
@@ -41,12 +42,20 @@ export function refresh(): void {
       unsupportedUrls.push(url);
       return;
     }
-    const flat = parser.parse(url);
-    filler.fillFlat(range.getCell(i + 1, 1), flat);
+    try {
+      const flat = parser.parse(url);
+      filler.fillFlat(range.getCell(i + 1, 1), flat);
+    } catch (e) {
+      cantPrecessUrls.push(url);
+    }
   });
 
   if (!_.isEmpty(unsupportedUrls)) {
     warn(`Next URLs are not supported:\n  - ${unsupportedUrls.join('\n  - ')}`);
+  }
+
+  if (!_.isEmpty(cantPrecessUrls)) {
+    warn(`Can't process next URLs due to errors:\n  - ${cantPrecessUrls.join('\n  - ')}`);
   }
 }
 

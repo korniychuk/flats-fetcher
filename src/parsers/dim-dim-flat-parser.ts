@@ -30,7 +30,7 @@ export class DimDimFlatParser implements FlatParser {
         const flatId = this.retrieveFlatIdFromUrl(url);
         const res = this.fetchFlatInfo(flatId);
 
-        const address = `${ res.address_raw }\n${ res.district }`;
+        const address = `${ res.address_raw }\n${ res.district || '' }`;
         const description = `${ res.title }\n${ res.description }`;
         const complex = this.t.retrieveComplex(description) || '';
         const coordinates = this.t.makeGMap([res.location_point.lat, res.location_point.lon]);
@@ -46,7 +46,7 @@ export class DimDimFlatParser implements FlatParser {
         const floorHeating = this.t.retrieveFloorHeating(description);
         const dishWasher = this.t.retrieveDishWasher(description);
         const updatedAt = this.t.makeUpdatedAt(new Date(res.updated_at));
-        const subways = this.prepareSubways(res.subways_distance).join('\n');
+        const subways = this.prepareSubways(res.subways_distance || []).join('\n');
         const info = [area, floor, updatedAt, floorHeating, dishWasher, subways].join('\n');
 
         return {
