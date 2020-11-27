@@ -1,55 +1,59 @@
 import TSS = GoogleAppsScript.Spreadsheet;
 
-// @ts-ignore
-const _ = LodashGS.load();
+import { DI } from './di';
+import {
+  EColumn,
+  FlatFiller,
+  FlatParserStrategy,
+} from './types';
 
-import { hello } from './lib';
-
-const ECol: any =
-  ['Id', 'Complex', 'Coordinates', 'Address', 'Money', 'RoomCount', 'Info', 'Link', 'Description', 'Phone', 'View', 'Note', 'Images']
-      .reduce((obj, key, i) => ({...obj, [key]: i + 1}), {}); /* ? */
-
-
-function onOpen() {
-  var ui = SpreadsheetApp.getUi();
+export function onOpen() {
+  const ui = SpreadsheetApp.getUi();
   // Or DocumentApp or FormApp.
   ui.createMenu('Flats Fetcher')
-      .addItem('Refrash URLs', 'refresh')
+    .addItem('Refresh URLs', 'App.refresh')
       //.addSeparator()
       //.addSubMenu(ui.createMenu('Sub-menu')
       //    .addItem('Second item', 'menuItem2'))
-      .addToUi();
+    .addToUi();
 }
 
-function refresh() {
+export function refresh(): void {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getActiveSheet();
   const range = sheet.getActiveRange();
+
+  if (!range) return error('No cells selected');
   if (range.getWidth() > 1) return error('Please don\'t select more than one column at the same time.');
-  if (range.getColumn() !== ECol.Link) return error('This function works only with "Link" (number 7) column');
+  if (range.getColumn() !== EColumn.Link) return error('This function works only with "Link" (number 7) column');
 
-  const URLs = range.getValues()[0];
-  hello();
+  const urls: string[] = range.getValues()[0];
+  const parserChooser = DI.get(FlatParserStrategy);
+  const filler = DI.get(FlatFiller);
+  console.log('URLs:', urls);
 
-  // console.log(range.getColumn());
-  // range.setValue(111);
-  // range.setFormula('=IMAGE("https://crm-08498194.s3.eu-west-1.amazonaws.com/capital/estate-images/watermark/ce8ecb379141877a3860ecbdd0a62d6d.jpg")');
-  // Logger.log('Test log');
-  // console.log('aoeu test');
-  // SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
-     // .alert('You clicked the first menu item!');
+  const unsupportedUrls: string[] = [];
+  urls.forEach((url, i) => {
+    const parser = parserChooser.get(url);
+    if (!parser) {
+      unsupportedUrls.push(url);
+      return;
+    }
+    const flat = parser.parse(url);
+    filler.fillFlat(range.getCell(i + 1, 1), flat);
+  });
+
+  if (!_.isEmpty(unsupportedUrls)) {
+    warn(`Next URLs are not supported:\n  - ${unsupportedUrls.join('\n  - ')}`);
+  }
 }
 
-function error(text: string) {
-  SpreadsheetApp.getUi().alert(`ERROR: ${text}`);
-}
-
-/**
- * @param {Range} cell
- */
-function handleRow(cell: TSS.Range) {
-
-}
+// /**
+//  * @param {Range} cell
+//  */
+// function handleRow(cell: TSS.Range) {
+//
+// }
 
 // /**
 //  * Fetches flat info

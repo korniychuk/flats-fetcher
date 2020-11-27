@@ -14,10 +14,8 @@
     "noLib": false,
     "noEmitHelpers": true,
     "importHelpers": true,
-    "strictNullChecks": false,
     "allowJs": true,
     "strict": true,
-    "noImplicitAny": true,
     "typeRoots": [
       "node_modules/@types"
     ],

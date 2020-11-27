@@ -3,13 +3,5 @@
 
 # except the extensions…
 !appsscript.json
-!**/*.gs
-!**/*.js
-!**/*.ts
-!**/*.html
-
-# ignore even valid files if in…
-**/*.d.ts
-.git/**
-.idea/**
-node_modules/**
+!dist/*
+!src/globals.ts
