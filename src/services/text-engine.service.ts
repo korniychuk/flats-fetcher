@@ -5,14 +5,13 @@ export class TextEngineService {
     }
 
     public prepareComplex(str: string): string {
-        return !str.trim()
-               ? str.replace(/\s+/g, '')
+        return str.replace(/\s+/g, '')
                ? str.replace(/^ *(ЖК *)?/ig, 'ЖК ').replace(/["']/g, '')
                : '';
     }
 
     public retrieveComplex(str: string): string | undefined {
-        const regex = /(?<complex>Ж(?:ил[а-я]*)?\s*К(?:омплекс[а-я]*)|Клубн[а-я]*\s+дом[а-я]*)\s*(?<name>(?:(?:(['"]).+?\2)|(?:«.+?»)|(?:“.+?”)|[a-zа-яі'"«»]+\d*(?:(?! [св])\s+(?!(ул|вул|\d+-))[a-zа-яі\d'"«»]+){0,4}))/ig;
+        const regex = /(?<complex>Ж(?:ил[а-я]*)?\s*К(?:омплекс[а-я]*)|Клубн[а-я]*\s+дом[а-я]*)\s*(?<name>(?:(?:(['"]).+?\3)|(?:«.+?»)|(?:“.+?”)|[a-zа-яі'"«»]+\d*(?:(?! [св])\s+(?!(ул|вул|\d+-))[a-zа-яі\d'"«»]+){0,4}))/ig;
         const values = [];
         let res;
         while (res = regex.exec(str)) {
