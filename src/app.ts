@@ -6,6 +6,10 @@ import {
   FlatFiller,
   FlatParserStrategy,
 } from './types';
+import {
+  error,
+  warn,
+} from './dialogs';
 
 export function onOpen() {
   const ui = SpreadsheetApp.getUi();
