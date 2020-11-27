@@ -29,7 +29,7 @@ export function refresh(): void {
   if (range.getWidth() > 1) return error('Please don\'t select more than one column at the same time.');
   if (range.getColumn() !== EColumn.Link) return error('This function works only with "Link" (number 7) column');
 
-  const urls: string[] = range.getValues()[0];
+  const urls: string[] = range.getValues().map(v => v[0]);
   const parserChooser = DI.get(FlatParserStrategyService);
   const filler = DI.get(FlatFillerService);
   console.log('URLs:', urls);
