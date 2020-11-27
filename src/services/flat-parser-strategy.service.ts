@@ -1,6 +1,6 @@
-import { FlatParser } from './flat-parser.type';
+import { FlatParser } from '../types/flat-parser.type';
 
-export class FlatParserStrategy {
+export class FlatParserStrategyService {
 
     public constructor(
         private parsers: FlatParser[],

@@ -1,7 +1,7 @@
 export interface Flat {
     id: number;
     complex: string;
-    address: number;
+    address: string;
     coordinates: string;
     /** With sign */
     price: string;

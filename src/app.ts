@@ -1,15 +1,13 @@
-import TSS = GoogleAppsScript.Spreadsheet;
-
 import { DI } from './di';
-import {
-  EColumn,
-  FlatFiller,
-  FlatParserStrategy,
-} from './types';
+import { EColumn } from './types';
 import {
   error,
   warn,
 } from './dialogs';
+import {
+  FlatFillerService,
+  FlatParserStrategyService,
+} from './services';
 
 export function onOpen() {
   const ui = SpreadsheetApp.getUi();
@@ -32,8 +30,8 @@ export function refresh(): void {
   if (range.getColumn() !== EColumn.Link) return error('This function works only with "Link" (number 7) column');
 
   const urls: string[] = range.getValues()[0];
-  const parserChooser = DI.get(FlatParserStrategy);
-  const filler = DI.get(FlatFiller);
+  const parserChooser = DI.get(FlatParserStrategyService);
+  const filler = DI.get(FlatFillerService);
   console.log('URLs:', urls);
 
   const unsupportedUrls: string[] = [];

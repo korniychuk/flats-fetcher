@@ -1,20 +1,15 @@
-const columns = [
-        'Id',
-        'Complex',
-        'Coordinates',
-        'Address',
-        'Money',
-        'RoomCount',
-        'Info',
-        'Link',
-        'Description',
-        'Phone',
-        'View',
-        'Note',
-        'Images',
-] as const;
-
-type Values<T> = T extends { [i: number]: infer K } ? K : never;
-
-export type EColumn = Record<Values<typeof columns>, number>;
-export const EColumn = columns.reduce((obj, key, i) => ({ ...obj, [key]: i + 1 }), {} as EColumn);
+export enum EColumn {
+        Id          = 1,
+        Complex     = 2,
+        Coordinates = 3,
+        Address     = 4,
+        Money       = 5,
+        RoomCount   = 6,
+        Info        = 7,
+        Link        = 8,
+        Description = 9,
+        Phone       = 10,
+        View        = 11,
+        Note        = 12,
+        Images      = 13,
+}

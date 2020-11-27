@@ -16,8 +16,10 @@ export class DimDimFlatParser implements FlatParser {
         const flatId = this.retrieveFlatIdFromUrl(url);
         const res = this.fetch(flatId);
 
+        const address = `${ res.address_raw }\n${ res.district }`;
+
         return {
-            address: res.address_raw,
+            address,
             complex: '',
             coordinates: '',
             description: '',
