@@ -5,7 +5,9 @@ export class TextEngineService {
     }
 
     public prepareComplex(str: string): string {
-        return str.replace(/^ *(ЖК *)?/ig, 'ЖК ').replace(/["']/g, '');
+        return !str.trim()
+               ? str.replace(/^ *(ЖК *)?/ig, 'ЖК ').replace(/["']/g, '')
+               : '';
     }
 
     public retrieveComplex(str: string): string | undefined {
