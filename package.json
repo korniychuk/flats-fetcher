@@ -2,6 +2,8 @@
   "scripts": {
     "build": "webpack",
     "build:watch": "webpack --watch",
+    "deploy": "clasp push",
+    "send": "yarn run build && yarn run deploy",
     "start": "clasp push --watch"
   },
   "dependencies": {
