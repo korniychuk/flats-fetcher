@@ -1,20 +1,25 @@
 export class TextEngineService {
 
     public prepareAddress(str: string): string {
-        return str.replace(/ *(ул(ица)?|вул(иця)?)\.? */ig, '');
+        return str.replace(/ *(?<![а-я])(ул(ица)?|вул(иця)?)\.? */ig, '');
     }
 
     public prepareComplex(str: string): string {
-        return !str.trim()
+        return str.replace(/\s+/g, '')
                ? str.replace(/^ *(ЖК *)?/ig, 'ЖК ').replace(/["']/g, '')
                : '';
     }
 
     public retrieveComplex(str: string): string | undefined {
-        const res = str.match(
-            /(?:ЖК|Жил(?:ой)?\s*Комплекс|Клубный дом)\s*(?:(?:(['"]).+?\1)|(?:«.+?»)|(?:“.+?”)|[a-zа-яі'"«»]+\d*(?:(?! [св])\s+(?!(ул|вул|\d+-))[a-zа-яі\d'"«»]+){0,4})/ig,
-        );
-        return res?.find(v => /ЖК/i.test(v)) || res?.[0];
+        const regex = /(?<complex>Ж(?:ил[а-я]*)?\s*К(?:омплекс[а-я]*)|Клубн[а-я]*\s+дом[а-я]*)\s*(?<name>(?:(?:(['"]).+?\2)|(?:«.+?»)|(?:“.+?”)|[a-zа-яі'"«»]+\d*(?:(?! [св])\s+(?!(ул|вул|\d+-))[a-zа-яі\d'"«»]+){0,4}))/ig;
+        const values = [];
+        let res;
+        while (res = regex.exec(str)) {
+            values.push(res);
+        }
+        let name = values.find(v => /ЖК/i.test(v.groups?.complex || ''))?.groups?.name;
+        if (!name) name = values.find(v => /Жил/i.test(v.groups?.complex || ''))?.groups?.name;
+        return name ? `ЖК ${ name }` : values[0]?.groups?.name;
     }
 
     public retrieveFloorHeating(str: string): string {
