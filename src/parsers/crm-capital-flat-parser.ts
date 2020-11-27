@@ -23,51 +23,59 @@ export class CrmCapitalFlatParser implements FlatParser {
 
     public parse(url: string): Flat {
         const flatId = this.retrieveFlatIdFromUrl(url);
-        const res = this.fetchFlatInfo(flatId);
+        const $ = this.fetchFlatInfo(flatId);
 
-        const address = `${ res.address_raw }\n${ res.district || '' }`;
-        const description = `${ res.title }\n${ res.description }`;
+        const address = $('.pdf-info h3').text().replace(/^[^,]+,\s+([^,]+(?:,[^,]+)?),\s*([^,]+(?:,[^,]*\d[^,]*)?)$/i, '$2\n$1')
+        const description = $('h3:contains("ДОПОЛНИТЕЛЬНАЯ") + .pdf-block').text();
         const complex = this.t.retrieveComplex(description) || '';
-        const coordinates = this.t.makeGMap([res.location_point.lat, res.location_point.lon]);
-        const link = `https://dimdim.ua/rent/apartment/${ flatId }/`;
-        const images = res.images.map(this.t.makeImage.bind(this.t));
 
-        let price = `${ res.price_usd } $`;
-        const commission = res.is_owner ? 'От владельца' : this.t.retrieveCommissionInfo(description);
+        // const coordinates = this.t.makeGMap([res.location_point.lat, res.location_point.lon]);
+        const link = `https://crm-capital.realtsoft.net/estate-${ flatId }.html?t=${ new Date().toISOString() }/`;
+        const images = $('.slider-item>img').toArray().map((img) => this.t.makeImage(img.attribs.src));
+        const rooms = +$('th:contains("Кол. комнат")+td').text() || 0;
+
+        let price = $('.pdf-header strong').first().text();
+        const commission = this.t.retrieveCommissionInfo(description);
         if (commission) price += `\n${ commission }`;
 
-        const area = this.t.makeArea(res.size_total, res.size_living, res.size_kitchen);
-        const floor = this.t.makeFloor(res.floor, res.floors_total);
+        const area = this.t.makeArea(
+            +$('th:contains("Площадь общая")+td').text() || undefined,
+            +$('th:contains("Площадь жилая")+td').text() || undefined,
+            +$('th:contains("Площадь кухни")+td').text() || undefined,
+
+        );
+        const floor = this.t.makeFloor(
+            +$('th:contains("Этаж")+td').first().text() || undefined,
+            +$('th:contains("Этажность")+td').text() || undefined,
+        );
         const floorHeating = this.t.retrieveFloorHeating(description);
         const dishWasher = this.t.retrieveDishWasher(description);
-        const updatedAt = this.t.makeUpdatedAt(new Date(res.updated_at));
-        // const subways = this.prepareSubways(res.subways_distance || []).join('\n');
-        const info = [area, floor, updatedAt, floorHeating, dishWasher].join('\n');
+        const info = [area, floor, floorHeating, dishWasher].join('\n');
 
         return {
             address,
             complex,
-            coordinates,
+            coordinates: '',
             description,
             id: 0,
             images,
             info,
             link,
             price,
-            rooms: res.room,
+            rooms,
         };
     }
 
     private retrieveFlatIdFromUrl(url: string): number {
         const id = url.match(this.urlRegExp)?.groups?.id;
-        assertNil(id, `DimDim: Can't retrieve Flat ID from the URL: ${ url }`);
+        assertNil(id, `CrmCapital: Can't retrieve Flat ID from the URL: ${ url }`);
         return +id;
     }
 
-    private fetchFlatInfo(flatId: number): AnyObject {
+    private fetchFlatInfo(flatId: number): cheerio.Root {
         const data = this.http.fetchHtml(
             `https://crm-capital.realtsoft.net/estate-${ flatId }.html`,
-            `Can't fetch flat info by ID: ${ flatId }`,
+            `CrmCapital: Can't fetch flat info by ID: ${ flatId }`,
         );
         return data;
     }

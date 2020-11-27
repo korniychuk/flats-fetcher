@@ -46,6 +46,7 @@ export function refresh(): void {
       const flat = parser.parse(url);
       filler.fillFlat(range.getCell(i + 1, 1), flat);
     } catch (e) {
+      console.error(e);
       cantPrecessUrls.push(url);
     }
   });
