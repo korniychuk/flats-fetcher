@@ -45,7 +45,7 @@ export class CrmCapitalFlatParser implements FlatParser {
 
         );
         const floor = this.t.makeFloor(
-            +$('th:contains("Этаж")+td').first().text() || undefined,
+            +$('th:contains("Этаж")+td').first().text() || undefined, // a bug here if we don't have a floor
             +$('th:contains("Этажность")+td').text() || undefined,
         );
         const floorHeating = this.t.retrieveFloorHeating(description);
