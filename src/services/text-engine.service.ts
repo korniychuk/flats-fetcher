@@ -5,7 +5,8 @@ export class TextEngineService {
     }
 
     public prepareComplex(str: string): string {
-        return str.replace(/\s+/g, '')
+        return !str.trim()
+               ? str.replace(/\s+/g, '')
                ? str.replace(/^ *(ЖК *)?/ig, 'ЖК ').replace(/["']/g, '')
                : '';
     }
